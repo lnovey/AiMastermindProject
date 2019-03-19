@@ -1,7 +1,6 @@
 from collections import Counter
 from itertools import product
 import random
-#from Board import *
 
 
 def evaluate(guess, secret):
@@ -40,8 +39,8 @@ def knuth(secret):
             guess = min(ALL_CODES, key=key)
 
 
-pattern = [random.choice('ABCDEF') for _ in range(4)]
-ALL_CODES = [''.join(c) for c in product('ABCDEF', repeat=4)]
+pattern = [random.choice('RBYGW') for _ in range(4)]
+ALL_CODES = [''.join(c) for c in product('RBYGW', repeat=4)]
 
 
 
