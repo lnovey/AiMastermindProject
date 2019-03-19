@@ -19,6 +19,8 @@ code = list(np.random.choice(colors, 4, replace=True)) # Generates random secret
 ai = False # deciding if it's AI or the user playing
 game = True
 attempts = 0
+X = np.array([])
+
 
 print("Secret color code = " + str(code))
 
@@ -37,9 +39,6 @@ else:
 
 
 
-
-X = np.array([])
-
 while game:
     
     correct_color = ""
@@ -52,36 +51,29 @@ while game:
     else:
         guess = input("Attempt {}: ".format(attempts+1))
         guess = guess.upper().replace(" ", "").split(",")
-    attempts +=1
-    
 
-    
-    #Criteria for correct player input
-
-
-    if len(guess) != len(code):
-        print("Invalid Input")
-        attempts -=1
-        continue 
-    
-    for i in range(len(code)):
-        if guess[i] not in colors:
-            print(guess[i] + " Is invalid input, not a possible color")
+        if len(guess) != len(code):  # Criteria for correct player input
+            print("Invalid Input")
             continue
-    
+
+        for i in range(len(code)):
+            if guess[i] not in colors:
+                print(guess[i] + " Is invalid input, not a possible color")
+                continue
+
     
     
     if guess == code:
-        print("holy hell you did it in "+str(attempts)+" attempts")
+        print("holy hell you did it in {} attempts".format(attempts+1))
         print(X)
-        game = False
+        sys.exit(0)
         
     if attempts > 5:
         print("Sorry you didnt make it, you only have 5 attempts.")
-        print("The correct color code was " + str(code))
-        game = False
+        print("The correct color code was {}.".format(code))
+        sys.exit(0)
         
-    if attempts <=5:
+    else:
         
         bulls, cows = evaluate(guess, code)
         reply = []
@@ -91,14 +83,14 @@ while game:
 
     
     guess = np.array(guess)
-    guess = np.append(guess, len(correct_color))
-    guess = np.append(guess, len(guessed_color))
+    guess = np.append(guess, bulls)
+    guess = np.append(guess, cows)
+
     X = np.append(X, np.array(guess))
-    
-    X = np.reshape(X,(attempts,6))
+    X = np.reshape(X,(attempts+1, 6))
 
- 
+    attempts += 1
 
-#The Output of the game will be vector X with shape (attempts,6) 
+#The Output of the game will be vector X with shape (attempts,6)
 #Column 4 is the amount of guesses you got correctly
 #column 5 is the amount of colors you got correctly but placed wrong
