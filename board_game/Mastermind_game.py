@@ -6,32 +6,17 @@ from itertools import product
 import Mastermind_AI as AI
 import random
 
-print (" --- MASTERMIND --- \n")
-print ("Guess the secret color code in as few tries as possible.\n")
-
-# Game variables
-colors = 'RBYGW'  # Allowed colors
-#code = list(np.random.choice(colors, 4, replace=True)) # Generates random secret code with colors as only allowed colors.
-
-code = ""
-for i in range(0,4):
-    code += random.choice(colors)
-
-
 
 ai = False # deciding if it's AI or the user playing
 game = True
 
-attempts = 0
-X = np.array([])
-
-
-print("Secret color code = {}".format(code))
+print (" --- MASTERMIND --- \n")
+print ("Guess the secret color code in as few tries as possible.\n")
 
 answer = input("Choose 1 to play yourself or 2 to watch the AI play: ")
 
 if answer == '1':
-    print("Please, enter your color code.\nYou can use red(R), green(G), blue(B), yellow(Y), white(W)")
+    print("Please, enter your color code.\nYou can use red(R), green(G), blue(B), yellow(Y), white(W), purple(P)")
     print("An example guess could be: GGBB")
     print("An 'X' in the reply means a correct colour in a correct place.")
     print("An 'O' in the reply means a correct colour in the wrong place.")
@@ -44,26 +29,32 @@ else:
 
 
 
+
+colors = 'RBYGWP'  # Allowed colors
+
+#Generating random secret code
+code = ""
+for i in range(0,4):
+    code += random.choice(colors)
+X = np.array([])   
+attempts = 0
+
 while game:
-    
-#    correct_color = ""
-#    guessed_color = ""
     print("Past tries:")
     print(X)
-
+    print("Possible colors: {}".format(colors))
     if ai:
         pass
     else:
         guess = input("Attempt {}: ".format(attempts+1)).upper()
-#        guess = guess.upper().replace(" ", "").split(",")
-
+        
         if len(guess) != len(code):  # Criteria for correct player input
             print("Invalid Input")
             continue
 
-        for i in range(len(code)):
+        for i in range(len(guess)):
             if guess[i] not in colors:
-                print(guess[i] + " Is invalid input, not a possible color")
+                print("{} Is invalid input, not a possible color".format(guess[i]))
                 continue
 
     # We have a problem here, if you put in the wrong input it still count is
@@ -71,18 +62,16 @@ while game:
     
         
         if guess == code:
-            print("holy hell you did it in {} attempts".format(attempts+1))
+            print("Congratulations you did it in {} attempts".format(attempts+1))
             print(X)
-            sys.exit(0)
+            break
             
         if attempts > 10:
             print("Sorry you didnt make it, you only have 10 attempts.")
             print("The correct color code was {}.".format(code))
-            sys.exit(0)
-            
-        else:
-            
-            bulls, cows = evaluate(guess, code)
+            break
+        else:           
+            bulls, cows = AI.evaluate(guess, code)
             reply = []
             reply.append(["X" for _ in range(bulls)])
             reply.append(["O" for _ in range(cows)])
@@ -99,9 +88,12 @@ while game:
         attempts += 1
 
 if ai == True:
-    All_Codes = [''.join(c) for c in product(colors, repeat=4)]
-    print("Input a code for the computer to solve, eg. BWWG")
+    #Defining all possbile states
+    All_Codes = [''.join(i) for i in product(colors, repeat=4)]
+    print("Input a code for the computer to solve, eg. BWWG.")
+    print("Possible colors {}".format(colors))
     code = input("Input code here: ").upper()
+    #Here we load in the AI.
     AI.MINIMAX(code,All_Codes)
     
 
